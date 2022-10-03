@@ -92,7 +92,7 @@ namespace BaseDeDatosSQLite.ClasesDB
                     {
                         lista.Add(new Cliente()
                         {
-                            NCliente = int.Parse(dataR["N° Cliente"].ToString()),
+                            NCliente = int.Parse(dataR["NumCliente"].ToString()),
                             Nombre = dataR["Nombre"].ToString(),
                             Apellido = dataR["Apellido"].ToString(),
                             Telefono = dataR["Telefono"].ToString(),
@@ -105,6 +105,56 @@ namespace BaseDeDatosSQLite.ClasesDB
             }
 
             return lista;
+        }
+
+        public bool Editar(Cliente obj)
+        {
+            bool respuesta = true;
+
+            using (SQLiteConnection conexion = new SQLiteConnection(cadenaDeConexion))
+            {
+                conexion.Open();
+                string consulta = "Update Cliente set Nombre = @nombre ,Apellido = @apellido ,Telefono = @telefono ,Email = @email where NumCliente = @numcliente";
+
+                SQLiteCommand cmd = new SQLiteCommand(consulta, conexion);
+                cmd.Parameters.Add(new SQLiteParameter("@numCliente", obj.NCliente));
+                cmd.Parameters.Add(new SQLiteParameter("@nombre", obj.Nombre));
+                cmd.Parameters.Add(new SQLiteParameter("@apellido", obj.Apellido));
+                cmd.Parameters.Add(new SQLiteParameter("@telefono", obj.Telefono));
+                cmd.Parameters.Add(new SQLiteParameter("@email", obj.Email));
+                cmd.CommandType = System.Data.CommandType.Text;
+
+                //si no hubo ninguna inserción, respuesta = false
+                if (cmd.ExecuteNonQuery() < 1)
+                {
+                    respuesta = false;
+                }
+            }
+
+            return respuesta;
+        }
+
+        public bool Eliminar(Cliente obj)
+        {
+            bool respuesta = true;
+
+            using (SQLiteConnection conexion = new SQLiteConnection(cadenaDeConexion))
+            {
+                conexion.Open();
+                string consulta = "delete from Cliente where NumCliente = @numcliente";
+
+                SQLiteCommand cmd = new SQLiteCommand(consulta, conexion);
+                cmd.Parameters.Add(new SQLiteParameter("@numCliente", obj.NCliente));
+                cmd.CommandType = System.Data.CommandType.Text;
+
+                //si no hubo ninguna inserción, respuesta = false
+                if (cmd.ExecuteNonQuery() < 1)
+                {
+                    respuesta = false;
+                }
+            }
+
+            return respuesta;
         }
 
     }
